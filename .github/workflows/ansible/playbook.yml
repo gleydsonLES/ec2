@@ -1,0 +1,30 @@
+---
+- name: Instalar e configurar Nginx em Ubuntu
+  hosts: all
+  become: yes
+
+  tasks:
+    - name: Atualizar o cache do apt
+      apt:
+        update_cache: yes
+
+    - name: Instalar Nginx
+      apt:
+        name: nginx
+        state: present
+
+    - name: Garantir que o Nginx está em execução e habilitado
+      systemd:
+        name: nginx
+        state: started
+        enabled: yes
+
+    - name: Permitir tráfego HTTP
+      ufw:
+        rule: allow
+        name: 'Nginx HTTP'
+
+    - name: Reiniciar Nginx para aplicar configurações
+      systemd:
+        name: nginx
+        state: restarted
